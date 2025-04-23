@@ -1,30 +1,95 @@
+<template>
+  <el-container class="window">
+    <el-header class="header"></el-header>
+    <el-aside></el-aside>
+    <el-main class="main" :style="curStyle">
+      <el-scrollbar :height="height">
+<!--        <component :is="curVersion"></component>-->
+        <div class="queryInput" v-if="version === '0.1'">
+          <div class="queryItem" v-for="(item, index) in query"  :key="item">
+            <el-button text circle @click="deleteQuery(index)" class="deleteBtn">
+              <el-icon><delete></delete></el-icon>
+            </el-button>
+            <hanzi-query :has-label="index === 0" v-model="item.value"
+                         :index = index
+                         @type-change="setQuery"
+                         @logic-change="setQuery"
+                         @position-change="setQuery"></hanzi-query>
+          </div>
+        </div>
+        <div class="queryInput" v-if="version === '0.2'">
+          <Ver0d2 @update="" style="margin-bottom: 20px"></Ver0d2>
+        </div>
+      </el-scrollbar>
+      <div class="buttonArea">
+        <div>
+          <el-button type="primary" @click="addQuery">{{`添加条件`}}</el-button>
+          <el-button @click="showTable">{{`拼音表筛选`}}</el-button>
+          <el-button type="danger" @click="deleteQuery(-1)">{{`清空条件`}}</el-button>
+          <el-button type="primary" plain @click="search">{{`查询`}}</el-button>
+          <el-button type="primary" plain @click="guess">{{`猜成语`}}</el-button>
+          <span class="resultText"><el-text>{{ curNum >= 0 ? `符合条件的成语数量为${curNum}` : ''  }}</el-text></span>
+        </div>
+        <el-button type="primary" plain @click="getResult">{{`查看结果`}}</el-button>
+      </div>
+      <div class="changeVersion">
+        <span>切换新版</span>
+        <el-switch v-model="isNewVer" @change="versionChange"></el-switch>
+      </div>
+    </el-main>
+    <el-dialog v-model="isShowResult" title="查询结果" width="800" class="dialog">
+      <el-scrollbar height="500">
+        <el-row v-for="chunk in chunks" :key="chunk" :gutter="20">
+          <el-col v-for="(item, colIndex) in chunk" :key="colIndex" :span="4">
+            <el-text>{{ item[0] }}</el-text>
+          </el-col>
+        </el-row>
+        <el-empty v-if="chunks.length === 0"></el-empty>
+      </el-scrollbar>
+    </el-dialog>
+  </el-container>
+</template>
 <script setup>
-import HanziQuery from "@/components/hanziQuery.vue";
+import HanziQuery from "@/components/ver0dot1/hanziQuery.vue";
 import {ref, computed, onMounted} from 'vue'
 import {Delete, Soccer} from "@element-plus/icons-vue";
 import { ElMessage as _message } from "element-plus";
 import { ElMessageBox as _messageBox} from "element-plus";
-import PyTable from "@/components/pyTable.vue";
+import PyTable from "@/components/ver0dot1/pyTable.vue";
 import { P } from "@/data/data.js"
 import { hanziToPinyin, pinyinToHanzi, idiomPinyinIndex } from "@/data/dataHelper.js";
 import {convertPinyin} from "@/data/dataHelper.js";
-
+import Ver0d2 from "@/components/ver0dot2/index.vue"
+const isNewVer = ref(false);
+const version = ref('0.1');
+const curStyle = ref({
+  width: '800px'
+})
+const versionChange = () =>  {
+  version.value = isNewVer.value ? '0.2' : '0.1';
+  if (version.value === '0.2') {
+    curStyle.value.width = '1200px'
+    height.value = 800;
+  }
+  else {
+    curStyle.value.width = '800px'
+    height.value = 500;
+  }
+}
 const data = ref({
   data0: [],
   data1: [],
   data2: [],
 })
-
 onMounted(()=>{
   initData()
   addQuery()
 })
-
 const initData = ()=>{
   data.value.data0 = [...Object.entries(P)]
   data.value.data1 = [...idiomPinyinIndex]
 }
-
+const height = ref(500);
 const query = ref([])
 const addQuery = ()=>{
   query.value.push({
@@ -95,8 +160,8 @@ const pyFilter = (cy, data, type = 0)=>{
     return cy.filter(item => {
       const pinyinArr = item[1].map(item => {
         return item[0].split(',').map(singlePy =>
-                parsePy(convertPinyin(singlePy.replace('ü','v')))
-            )
+            parsePy(convertPinyin(singlePy.replace('ü','v')))
+        )
       })
       // if(singleTest.value){
       //   singleTest.value = false
@@ -291,63 +356,12 @@ const guess = ()=>{
 }
 
 </script>
-<template>
-  <el-container class="window">
-    <el-header class="header">
-
-    </el-header>
-    <el-aside>
-      <div class="charHasCheck">
-        <py-table @close="closeTable"  :show="isTableShow"></py-table>
-      </div>
-    </el-aside>
-    <el-main class="main">
-      <el-scrollbar height="500px">
-        <div class="queryInput">
-          <div class="queryItem" v-for="(item, index) in query"  :key="item">
-            <el-button text circle @click="deleteQuery(index)" class="deleteBtn">
-              <el-icon><delete></delete></el-icon>
-            </el-button>
-            <hanzi-query :has-label="index === 0" v-model="item.value"
-                         :index = index
-                         @type-change="setQuery"
-                         @logic-change="setQuery"
-                         @position-change="setQuery"></hanzi-query>
-          </div>
-        </div>
-      </el-scrollbar>
-      <div class="buttonArea">
-        <div>
-          <el-button type="primary" @click="addQuery">{{`添加条件`}}</el-button>
-          <el-button @click="showTable">{{`拼音表筛选`}}</el-button>
-          <el-button type="danger" @click="deleteQuery(-1)">{{`清空条件`}}</el-button>
-          <el-button type="primary" plain @click="search">{{`查询`}}</el-button>
-          <el-button type="primary" plain @click="guess">{{`猜成语`}}</el-button>
-          <span class="resultText"><el-text>{{ curNum >= 0 ? `符合条件的成语数量为${curNum}` : ''  }}</el-text></span>
-        </div>
-        <el-button type="primary" plain @click="getResult">{{`查看结果`}}</el-button>
-      </div>
-    </el-main>
-    <el-dialog v-model="isShowResult" title="查询结果" width="800" class="dialog">
-      <el-scrollbar height="500">
-        <el-row v-for="chunk in chunks" :key="chunk" :gutter="20">
-          <el-col v-for="(item, colIndex) in chunk" :key="colIndex" :span="4">
-            <el-text>{{ item[0] }}</el-text>
-          </el-col>
-        </el-row>
-        <el-empty v-if="chunks.length === 0"></el-empty>
-      </el-scrollbar>
-    </el-dialog>
-  </el-container>
-</template>
-
 <style scoped>
 .charHasCheck {
   overflow-x: hidden;
 }
 .main {
   margin: 0 auto;
-  width: 800px;
   box-shadow: 0 3px 12px rgba(0, 0, 0, .07), 0 1px 4px rgba(0, 0, 0, .07);;
   border-radius: 8px;
 }
@@ -374,5 +388,13 @@ const guess = ()=>{
 }
 .dialog {
   padding: 20px;
+}
+.changeVersion {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 15px;
+  font-weight: bold;
 }
 </style>

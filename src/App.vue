@@ -1,9 +1,9 @@
 <script setup>
-import MianPage from "@/components/mianPage.vue";
+import index from "@/components/index.vue";
 </script>
 
 <template>
-  <mian-page></mian-page>
+  <index></index>
 </template>
 
 <style scoped>

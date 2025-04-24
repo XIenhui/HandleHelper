@@ -29,7 +29,7 @@ const props = defineProps({
       shengmu: {},
       yunmu: {}
     })
-  }
+  },
 })
 
 const emit = defineEmits(['update'])
@@ -74,7 +74,7 @@ const updateFilter = (type, val) => {
 const emitCombined = () => {
   emit('update', {
     input: state.input,
-    filters: state.filters
+    filters: state.filters,
   })
 }
 </script>

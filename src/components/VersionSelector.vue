@@ -11,7 +11,7 @@
 
 <script setup>
 import { versions } from "@/data/versions.js";
-import { ref, onMounted } from "vue";
+import {ref, onMounted, watch} from "vue";
 import { ElSelect, ElOption } from 'element-plus'
 const emit = defineEmits(['update'])
 const props = defineProps({
@@ -21,7 +21,9 @@ const props = defineProps({
 })
 const selectedValue = ref(null);
 const options = ref([]);
-
+watch(() => props.version,
+    (val) => selectedValue.value = val
+)
 onMounted(() => {
   selectedValue.value =  props.version ?? null
   options.value = versions.map((item, _index) => ({

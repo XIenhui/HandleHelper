@@ -26,9 +26,9 @@
 <script setup>
 import HanziQuery from "@/components/ver0dot1/hanziQuery.vue";
 import {Delete} from "@element-plus/icons-vue";
-import {computed, onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import {P} from "@/data/data.js";
-import {convertPinyin, idiomPinyinIndex, pinyinToHanzi} from "@/data/dataHelper.js";
+import {convertPinyin, idiomPinyinIndex, parsePy, pinyinToHanzi} from "@/data/dataHelper.ts";
 import {ElMessage as _message} from "element-plus/es/components/message/index";
 const emit = defineEmits(['update'])
 const data = ref({
@@ -252,25 +252,7 @@ const hzLogicMatch = (tar, data = {
     return tar[position-1] !== value
   }
 }
-const parsePy = (pinyin)=>{
-  const tone = pinyin.match(/[1-4]$/)?.[0] || '0';
-  const base = pinyin.replace(tone, '');
 
-  // 分离声母和韵母（支持零声母）
-  let initial = '';
-  let final = base;
-  const initials = ['b','p','m','f','d','t','n','l','g','k','h','j','q','x','zh','ch','sh','r','z','c','s','y','w'];
-  for (let i = Math.min(2, base.length); i > 0; i--) {
-    const part = base.slice(0, i);
-    if (initials.includes(part)) {
-      initial = part;
-      final = base.slice(i);
-      break;
-    }
-  }
-
-  return { initial, final, tone: parseInt(tone) || 0 };
-}
 
 </script>
 

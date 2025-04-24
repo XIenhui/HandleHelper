@@ -4,30 +4,21 @@
     <el-aside></el-aside>
     <el-main class="main" :style="curStyle">
       <div class="queryInput">
-        <Ver0d1 v-if="version === versions[0].name"></Ver0d1>
-        <Ver0d2 v-if="version === versions[1].name" @update="" style="margin-bottom: 20px"></Ver0d2>
+        <Ver0d1 v-if="version === versions[0].name" @update="setResult"></Ver0d1>
+        <Ver0d2 v-if="version === versions[1].name" @update="setResult" style="margin-bottom: 20px"></Ver0d2>
       </div>
       <div class="globalHandle">
         <div class="resultHandle">
-          <span class="resultText"><el-text>{{ curNum >= 0 ? `符合条件的成语数量为${curNum}` : ''  }}</el-text></span>
+          <span class="resultText"><el-text>{{ number >= 0 ? `符合条件的成语数量为${number}` : ''  }}</el-text></span>
           <el-button type="primary" plain @click="getResult">{{`查看结果`}}</el-button>
         </div>
         <div class="functions">
           <el-button type="primary" plain @click="guess">{{`猜成语`}}</el-button>
-          <version-selector :version="'0'" @update="setNewVersion"></version-selector>
+          <version-selector :version="version" @update="setNewVersion"></version-selector>
         </div>
       </div>
     </el-main>
-    <el-dialog v-model="isShowResult" title="查询结果" width="800" class="dialog">
-      <el-scrollbar height="500">
-        <el-row v-for="chunk in chunks" :key="chunk" :gutter="20">
-          <el-col v-for="(item, colIndex) in chunk" :key="colIndex" :span="4">
-            <el-text>{{ item[0] }}</el-text>
-          </el-col>
-        </el-row>
-        <el-empty v-if="chunks.length === 0"></el-empty>
-      </el-scrollbar>
-    </el-dialog>
+    <result-pop v-model="isShowResult" :chunks="chunks"></result-pop>
   </el-container>
 </template>
 <script setup>
@@ -38,7 +29,13 @@ import Ver0d2 from "@/components/ver0dot2/index.vue"
 import Ver0d1 from "@/components/ver0dot1/index.vue"
 import VersionSelector from "@/components/VersionSelector.vue";
 import { versions } from "@/data/versions.js";
+import ResultPop from "@/components/ResultPop.vue";
+
 const version = ref('0.1');
+const number = ref();
+const chunks = ref([]);
+const isShowResult = ref(false)
+
 const curStyle = ref({
   width: '800px'
 })
@@ -46,8 +43,12 @@ const setNewVersion = (ver) =>  {
   version.value = ver.name;
   curStyle.value = ver.style;
 }
+const setResult = (result) => {
+  chunks.value = result.data;
+  number.value = result.num;
+}
 const getResult = ()=>{
-  if(curNum.value >= 1000){
+  if(number.value >= 1000){
     _messageBox.confirm(
         '当前条目较多，是否确认查看',
         'Warning',
@@ -64,37 +65,6 @@ const getResult = ()=>{
   }
   else isShowResult.value = true
 }
-
-const results = ref([[]])
-
-const combinedResult = computed(()=>{
-  const res = new Set
-  for (const result of results.value){
-    if (result.length > 0 ) {
-      result.forEach(item => {
-        res.add(item)
-      })
-    }
-  }
-  return [...res]
-})
-
-const chunks = computed(()=>{
-  const chunks = [];
-  for (let i = 0; i < combinedResult.value.length; i += 6) {
-    chunks.push(combinedResult.value.slice(i, i + 6));
-  }
-  return chunks;
-})
-
-
-const curNum = computed(()=>{
-  return combinedResult.value.length
-})
-
-
-const isShowResult = ref(false)
-
 const guess = ()=>{
   _message.error('兜能不足')
 }

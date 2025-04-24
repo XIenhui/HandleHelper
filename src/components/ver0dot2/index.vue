@@ -1,23 +1,25 @@
 <template>
-  <el-scrollbar height="800px">
-    <div class="pinyin-batch-input">
-      <div class="input-column">
-        <PinyinInputWithTone
-            v-for="(item, index) in inputs"
-            :key="index"
-            :globalFilterConfig="globalFilters"
-            @update="val => updateInput(index, val)"
-        />
+  <div>
+    <el-scrollbar height="800px">
+      <div class="pinyin-batch-input">
+        <div class="input-column">
+          <PinyinInputWithTone
+              v-for="(item, index) in inputs"
+              :key="index"
+              :globalFilterConfig="globalFilters"
+              @update="val => updateInput(index, val)"
+          />
+        </div>
+        <div class="filter-area">
+          <GlobalFilterConfig @update="val => updateFilters(val)"/>
+        </div>
       </div>
-      <div class="filter-area">
-        <GlobalFilterConfig @update="val => updateFilters(val)"/>
+    </el-scrollbar>
+    <div class="buttonArea">
+      <div>
+        <el-button type="danger">{{`重置全部`}}</el-button>
+        <el-button type="primary" plain>{{`查询`}}</el-button>
       </div>
-    </div>
-  </el-scrollbar>
-  <div class="buttonArea">
-    <div>
-      <el-button type="danger">{{`清空全部条件`}}</el-button>
-      <el-button type="primary" plain>{{`查询`}}</el-button>
     </div>
   </div>
 </template>

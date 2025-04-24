@@ -2,9 +2,9 @@
   <el-select v-model="selectedValue" placeholder="请选择版本" @change="onVersionChange" style="width: 200px">
     <el-option
         v-for="item in options"
-        :key="item.value + '-' + item.label"
-        :label="`ver-${item.label}`"
-        :value="item.value + '-' + item.label"
+        :key="item.name"
+        :label="`ver-${item.name}`"
+        :value="item.name"
     />
   </el-select>
 </template>
@@ -25,14 +25,13 @@ const options = ref([]);
 onMounted(() => {
   selectedValue.value =  props.version ?? null
   options.value = versions.map((item, index) => ({
-    value: `${item.value}-${item.name}`,
-    label: item.name
+    value: item.value,
+    name: item.name
   }));
 });
 
 function onVersionChange(val) {
-  const [valueStr, name] = val.split("-");
-  const version = versions.find(v => v.value === Number(valueStr) && v.name === name);
+  const version = versions.find(v => v.name === val);
   if (version) {
     emit('update', version);
   }

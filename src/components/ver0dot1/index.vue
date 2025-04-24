@@ -1,22 +1,24 @@
 <template>
-  <el-scrollbar :height="height">
-    <div class="queryItem" v-for="(item, index) in query"  :key="item">
-      <el-button text circle @click="deleteQuery(index)" class="deleteBtn">
-        <el-icon><delete></delete></el-icon>
-      </el-button>
-      <hanzi-query :has-label="index === 0" v-model="item.value"
-                   :index = index
-                   @type-change="setQuery"
-                   @logic-change="setQuery"
-                   @position-change="setQuery"></hanzi-query>
-    </div>
-  </el-scrollbar>
-  <div class="buttonArea">
-    <div>
-      <el-button type="primary" @click="addQuery">{{`添加条件`}}</el-button>
-<!--      <el-button @click="showTable">{{`拼音表筛选`}}</el-button>-->
-      <el-button type="danger" @click="deleteQuery(-1)">{{`清空条件`}}</el-button>
-      <el-button type="primary" plain @click="search">{{`查询`}}</el-button>
+  <div>
+    <el-scrollbar :height="height">
+      <div class="queryItem" v-for="(item, index) in query"  :key="item">
+        <el-button text circle @click="deleteQuery(index)" class="deleteBtn">
+          <el-icon><delete></delete></el-icon>
+        </el-button>
+        <hanzi-query :has-label="index === 0" v-model="item.value"
+                     :index = index
+                     @type-change="setQuery"
+                     @logic-change="setQuery"
+                     @position-change="setQuery"></hanzi-query>
+      </div>
+    </el-scrollbar>
+    <div class="buttonArea">
+      <div>
+        <el-button type="primary" @click="addQuery">{{`添加条件`}}</el-button>
+        <!--      <el-button @click="showTable">{{`拼音表筛选`}}</el-button>-->
+        <el-button type="danger" @click="deleteQuery(-1)">{{`清空条件`}}</el-button>
+        <el-button type="primary" plain @click="search">{{`查询`}}</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -29,7 +31,7 @@ import {computed, onMounted, ref} from "vue";
 import {P} from "@/data/data.js";
 import {convertPinyin, idiomPinyinIndex, pinyinToHanzi} from "@/data/dataHelper.js";
 import {ElMessage as _message} from "element-plus/es/components/message/index";
-
+const emit = defineEmits(['update'])
 const data = ref({
   data0: [],
   data1: [],
@@ -104,6 +106,32 @@ const search = ()=>{
     }
     // console.log('res',res)
     results.value.push(res)
+  }
+  result.value = removeMulti(results.value)
+  setChunks(result.value)
+  emit('update', {
+    data: chunks.value,
+    num: result.value.length
+  });
+}
+const chunks = ref([[]])
+const result = ref([])
+
+const removeMulti = (data) => {
+  const res = new Set
+  for (const result of data){
+    if (result.length > 0 ) {
+      result.forEach(item => {
+        res.add(item)
+      })
+    }
+  }
+  return [...res]
+}
+const setChunks = (data) => {
+  chunks.value = []
+  for (let i = 0; i < data.length; i += 6) {
+    chunks.value.push(data.slice(i, i + 6));
   }
 }
 const setQuery = (data,type,index) => {

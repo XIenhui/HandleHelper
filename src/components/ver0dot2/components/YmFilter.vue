@@ -24,6 +24,10 @@ const props = defineProps({
   globalConfig: {
     type: Object,
     default: () => {}
+  },
+  isExist: {
+    type: Boolean,
+    default: false,
   }
 })
 const emit = defineEmits(['update'])
@@ -40,10 +44,14 @@ const finals = [
 
 const activeMap = reactive({})
 const reset = () => {
-  Object.keys(activeMap).forEach((key) => {
-    if (isDisabled(key)) return
-    activeMap[key] = true
-  })
+  if (props.isExist) finals.forEach(item => (activeMap[item] = false))
+  else {
+    Object.keys(activeMap).forEach((key) => {
+      if (isDisabled(key)) return
+      activeMap[key] = true
+    })
+  }
+  emit('update', { ...activeMap })
 }
 const isDisabled = (item) => {
   if (!props.globalConfig) return false;
@@ -56,7 +64,8 @@ const toggle = (item) => {
   emit('update', { ...activeMap })
 }
 onMounted(()=>{
-  finals.forEach(item => (activeMap[item] = true))
+  if (props.isExist) finals.forEach(item => (activeMap[item] = false))
+  else finals.forEach(item => (activeMap[item] = true))
 })
 watch(
     () => props.globalConfig,

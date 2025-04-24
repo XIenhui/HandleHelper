@@ -138,14 +138,10 @@ const multiFilter = (cy, type = 0, logic:(data: []) => Boolean)=>{
             const hanziArr = Array.from(item[0]);
             const multiArr = item[1].map((pys, index) => {
                 const pyArray = pys[0].split(',').map(singlePy =>
-                    parsePy(convertPinyin(singlePy.replace('ü','v')))
+                    [...parsePy(convertPinyin(singlePy.replace('ü','v'))), hanziArr[index]]
                 )
-                return [...pyArray, hanziArr[index]]
+                return [...pyArray]
             })
-            if (ddd) {
-                console.log(multiArr);
-                ddd = false
-            }
             return logic(multiArr)
         })
     }

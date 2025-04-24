@@ -18,12 +18,16 @@
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue'
+import {onMounted, reactive, watch} from 'vue'
 
 const props = defineProps({
   globalConfig: {
     type: Object,
     default: () => {}
+  },
+  isExist: {
+    type: Boolean,
+    default: false,
   }
 })
 const emit = defineEmits(['update'])
@@ -35,13 +39,16 @@ const initials = [
 ]
 
 const activeMap = reactive({})
-initials.forEach(item => (activeMap[item] = true))
 
 const reset = () => {
-  Object.keys(activeMap).forEach((key) => {
-    if (isDisabled(key)) return
-    activeMap[key] = true
-  })
+  if (props.isExist) initials.forEach(item => (activeMap[item] = false))
+  else {
+    Object.keys(activeMap).forEach((key) => {
+      if (isDisabled(key)) return
+      activeMap[key] = true
+    })
+  }
+  emit('update', { ...activeMap })
 }
 const isDisabled = (item) => {
   if (!props.globalConfig) return false;
@@ -64,6 +71,10 @@ watch(
     },
     { immediate: true }
 )
+onMounted(()=>{
+  if (props.isExist) initials.forEach(item => (activeMap[item] = false))
+  else initials.forEach(item => (activeMap[item] = true))
+})
 </script>
 
 <style scoped>

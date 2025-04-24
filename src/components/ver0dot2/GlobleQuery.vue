@@ -1,16 +1,18 @@
 <template>
   <div class="global-filter-config">
-    <h4>全局过滤设置</h4>
     <ToneFilter
         mode="config"
+        :is-exist="props.isExist"
         @update="val => updateConfig('tone', val)"
     />
     <ShengmuFilter
         mode="config"
+        :is-exist="props.isExist"
         @update="val => updateConfig('shengmu', val)"
     />
     <YunmuFilter
         mode="config"
+        :is-exist="props.isExist"
         @update="val => updateConfig('yunmu', val)"
     />
   </div>
@@ -30,6 +32,10 @@ const props = defineProps({
       shengmu: {},
       yunmu: {}
     })
+  },
+  isExist: {
+    type: Boolean,
+    default: false,
   }
 })
 

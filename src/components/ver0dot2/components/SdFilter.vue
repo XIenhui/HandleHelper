@@ -18,13 +18,17 @@
 </template>
 
 <script setup>
-import { reactive, watch, toRefs } from 'vue'
+import { reactive, watch, toRefs, onMounted } from 'vue'
 
 // Props & Emits
 const props = defineProps({
   globalConfig: {
     type: Array,
     default: () => [true, true, true, true, true], // 默认全启用：轻声, 一声, 二声, 三声, 四声
+  },
+  isExist: {
+    type: Boolean,
+    default: false,
   }
 })
 const emit = defineEmits(['update'])
@@ -34,13 +38,17 @@ const toneLabels = ['轻声', '一声', '二声', '三声', '四声']
 
 // 本地状态（默认启用）
 const state = reactive({
-  activeTones: [true, true, true, true, true],
+  activeTones: [],
 })
 const reset = () => {
-  state.activeTones.forEach((_val, index)=>{
-    if (isDisabled(index)) return;
-    state.activeTones[index] = true;
-  })
+  if (!props.isExist) {
+    state.activeTones.forEach((_val, index)=>{
+      if (isDisabled(index)) return;
+      state.activeTones[index] = true;
+    })
+  }
+  else state.activeTones = [false, false, false, false, false];
+  emit('update', [...state.activeTones])
 }
 const { activeTones } = toRefs(state)
 
@@ -67,6 +75,10 @@ watch(
     },
     { immediate: true, deep: true }
 )
+onMounted(() => {
+  if (props.isExist) state.activeTones = [false, false, false, false, false];
+  else state.activeTones = [true, true, true, true, true];
+})
 </script>
 
 <style scoped>

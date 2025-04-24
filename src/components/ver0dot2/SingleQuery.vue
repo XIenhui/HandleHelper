@@ -11,6 +11,11 @@
       <ShengmuFilter :globalConfig="globalFilter.shengmu" @update="val => updateFilter('shengmu', val)" />
       <YunmuFilter :globalConfig="globalFilter.yunmu" @update="val => updateFilter('yunmu', val)" />
     </div>
+    <div class="filter-panel">
+      <ToneFilter :is-exist="true" :globalConfig="globalFilter.tone" @update="val => updateFilter('tone', val)" />
+      <ShengmuFilter :is-exist="true" :globalConfig="globalFilter.shengmu" @update="val => updateFilter('shengmu', val)" />
+      <YunmuFilter :is-exist="true" :globalConfig="globalFilter.yunmu" @update="val => updateFilter('yunmu', val)" />
+    </div>
   </div>
 </template>
 
@@ -49,7 +54,7 @@ watch(()=>props.globalFilterConfig,
     {deep: true, immediate:true}
 )
 const state = reactive({
-  input: {
+  inputs: {
     character: '',
     pinyin: '',
     tone: null
@@ -62,7 +67,7 @@ const state = reactive({
 })
 
 const onInputChange = (val) => {
-  state.input = { ...val }
+  state.inputs = { ...val }
   emitCombined()
 }
 
@@ -73,7 +78,7 @@ const updateFilter = (type, val) => {
 
 const emitCombined = () => {
   emit('update', {
-    input: state.input,
+    inputs: state.inputs,
     filters: state.filters,
   })
 }

@@ -4,7 +4,7 @@
     <el-aside></el-aside>
     <el-main class="main" :style="curStyle">
       <div class="queryInput">
-        <component :is="curVersion" @update="setResult"></component>
+        <component :is="curVersion" @update="setResult" @reset="reset"></component>
       </div>
       <div class="globalHandle">
         <div class="resultHandle">
@@ -21,7 +21,7 @@
   </el-container>
 </template>
 <script setup>
-import {ref, onMounted, shallowRef} from 'vue'
+import {ref, onMounted, shallowRef, nextTick} from 'vue'
 import { ElMessage as _message } from "element-plus";
 import { ElMessageBox as _messageBox} from "element-plus";
 import VersionSelector from "@/components/VersionSelector.vue";
@@ -43,6 +43,13 @@ const setNewVersion = (ver) =>  {
 const setResult = (result) => {
   chunks.value = result.data;
   number.value = result.num;
+}
+const reset = () => {
+  const buffer = curVersion.value;
+  curVersion.value = null;
+  nextTick(() => {
+    curVersion.value = buffer;
+  })
 }
 const getResult = ()=>{
   if(number.value >= 1000){

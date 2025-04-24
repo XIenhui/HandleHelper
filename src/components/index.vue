@@ -4,8 +4,7 @@
     <el-aside></el-aside>
     <el-main class="main" :style="curStyle">
       <div class="queryInput">
-        <Ver0d1 v-if="version === versions[0].name" @update="setResult"></Ver0d1>
-        <Ver0d2 v-if="version === versions[1].name" @update="setResult" style="margin-bottom: 20px"></Ver0d2>
+        <component :is="curVersion" @update="setResult"></component>
       </div>
       <div class="globalHandle">
         <div class="resultHandle">
@@ -22,26 +21,24 @@
   </el-container>
 </template>
 <script setup>
-import {ref, computed, onMounted} from 'vue'
+import {ref, computed, onMounted, shallowRef} from 'vue'
 import { ElMessage as _message } from "element-plus";
 import { ElMessageBox as _messageBox} from "element-plus";
-import Ver0d2 from "@/components/ver0dot2/index.vue"
-import Ver0d1 from "@/components/ver0dot1/index.vue"
 import VersionSelector from "@/components/VersionSelector.vue";
 import { versions } from "@/data/versions.js";
 import ResultPop from "@/components/ResultPop.vue";
-
-const version = ref('0.1');
+const version = ref();
+const curVersion = shallowRef();
 const number = ref();
 const chunks = ref([]);
 const isShowResult = ref(false)
-
 const curStyle = ref({
   width: '800px'
 })
 const setNewVersion = (ver) =>  {
   version.value = ver.name;
   curStyle.value = ver.style;
+  curVersion.value = ver.component;
 }
 const setResult = (result) => {
   chunks.value = result.data;
@@ -68,7 +65,10 @@ const getResult = ()=>{
 const guess = ()=>{
   _message.error('兜能不足')
 }
-
+onMounted(() => {
+  version.value = versions[0].name;
+  curVersion.value = versions[0].component;
+})
 </script>
 <style scoped>
 .main {

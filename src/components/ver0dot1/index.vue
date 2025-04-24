@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-
 import HanziQuery from "@/components/ver0dot1/hanziQuery.vue";
 import {Delete} from "@element-plus/icons-vue";
 import {computed, onMounted, ref} from "vue";

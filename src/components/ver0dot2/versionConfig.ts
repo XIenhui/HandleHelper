@@ -1,4 +1,4 @@
-import {Version} from "../../data/versions";
+import {Version} from "@/data/versions";
 import Index from "./index.vue"
 export const config: Version = {
     value: 1,

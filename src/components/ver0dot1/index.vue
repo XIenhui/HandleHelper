@@ -65,19 +65,6 @@ const deleteQuery = (index)=>{
     _message.warning('至少需要一个条件')
   }
 }
-
-const isTableShow = ref(false)
-const showTable = ()=>{
-  isTableShow.value = !isTableShow.value
-}
-const closeTable = ()=> {
-  isTableShow.value = false
-}
-
-const deleteBtnClass = computed((index)=>{
-  return index === 1 ? 'deleteBtn1' : 'deleteBtn2'
-})
-
 const search = ()=>{
   results.value = []
   // console.log(Object.entries(data.value))
@@ -94,7 +81,7 @@ const search = ()=>{
         if(item.type === 'py') res = pyFilter(res, item)
         if(item.type === 'hz') res = hzFilter(res, item)
       })
-      res = res.map(([hz, py]) => [hz])
+      res = res.map(([hz, _py]) => [hz])
     }
     else if(name === 'data1'){
       query.value.forEach(item => {

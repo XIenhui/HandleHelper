@@ -24,7 +24,7 @@ const options = ref([]);
 
 onMounted(() => {
   selectedValue.value =  props.version ?? null
-  options.value = versions.map((item, index) => ({
+  options.value = versions.map((item, _index) => ({
     value: item.value,
     name: item.name
   }));

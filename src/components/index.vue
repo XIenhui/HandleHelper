@@ -21,7 +21,7 @@
   </el-container>
 </template>
 <script setup>
-import {ref, computed, onMounted, shallowRef} from 'vue'
+import {ref, onMounted, shallowRef} from 'vue'
 import { ElMessage as _message } from "element-plus";
 import { ElMessageBox as _messageBox} from "element-plus";
 import VersionSelector from "@/components/VersionSelector.vue";
@@ -81,9 +81,6 @@ onMounted(() => {
 }
 .resultText {
   margin: 0 12px;
-}
-.dialog {
-  padding: 20px;
 }
 .globalHandle {
   display: flex;

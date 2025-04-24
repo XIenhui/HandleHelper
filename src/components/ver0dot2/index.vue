@@ -4,7 +4,7 @@
       <div class="pinyin-batch-input">
         <div class="input-column">
           <PinyinInputWithTone
-              v-for="(item, index) in inputs"
+              v-for="(_item, index) in inputs"
               :key="index"
               :globalFilterConfig="globalFilters"
               @update="val => updateInput(index, val)"
@@ -28,8 +28,6 @@
 import { reactive } from 'vue'
 import PinyinInputWithTone from './SingleQuery.vue'
 import GlobalFilterConfig from './GlobleQuery.vue'
-import HanziQuery from "@/components/ver0dot1/hanziQuery.vue";
-import {Delete} from "@element-plus/icons-vue";
 
 const emit = defineEmits(['update'])
 

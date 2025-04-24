@@ -1,18 +1,23 @@
 <template>
-  <div class="pinyin-batch-input">
-    <!-- 四个拼音输入区域：纵向排列 -->
-    <div class="input-column">
-      <PinyinInputWithTone
-          v-for="(item, index) in inputs"
-          :key="index"
-          :globalFilterConfig="globalFilters"
-          @update="val => updateInput(index, val)"
-      />
+  <el-scrollbar height="800px">
+    <div class="pinyin-batch-input">
+      <div class="input-column">
+        <PinyinInputWithTone
+            v-for="(item, index) in inputs"
+            :key="index"
+            :globalFilterConfig="globalFilters"
+            @update="val => updateInput(index, val)"
+        />
+      </div>
+      <div class="filter-area">
+        <GlobalFilterConfig @update="val => updateFilters(val)"/>
+      </div>
     </div>
-
-    <!-- 全局过滤配置：在底部 -->
-    <div class="filter-area">
-      <GlobalFilterConfig @update="val => updateFilters(val)"/>
+  </el-scrollbar>
+  <div class="buttonArea">
+    <div>
+      <el-button type="danger">{{`清空全部条件`}}</el-button>
+      <el-button type="primary" plain>{{`查询`}}</el-button>
     </div>
   </div>
 </template>
@@ -21,6 +26,8 @@
 import { reactive } from 'vue'
 import PinyinInputWithTone from './SingleQuery.vue'
 import GlobalFilterConfig from './GlobleQuery.vue'
+import HanziQuery from "@/components/ver0dot1/hanziQuery.vue";
+import {Delete} from "@element-plus/icons-vue";
 
 const emit = defineEmits(['update'])
 
@@ -72,5 +79,12 @@ const emitCombined = () => {
 .filter-area {
   border-top: 1px dashed #ccc;
   padding-top: 16px;
+}
+.buttonArea {
+  margin-top: 12px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

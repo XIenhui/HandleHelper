@@ -4,7 +4,6 @@ export const config: Version = {
     name: '0.1',
     style: {
         width: '800px',
-        height: '500px'
     },
     component: null,
 }

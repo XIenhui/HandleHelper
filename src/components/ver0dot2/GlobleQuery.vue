@@ -48,8 +48,24 @@ const config = reactive({
 })
 
 const updateConfig = (type, val) => {
-  config[type] = val
-  emit('update', { ...config })
+  config[type] = val;
+  if (props.isExist) {
+    if (type === 'tone'){
+      const data = [];
+      config.tone.forEach((item, index) => {
+        if (item) data.push(index);
+      })
+      emit('update', [...data], type)
+    }
+    else {
+      const data = [];
+      Object.keys(config[type]).forEach((key) => {
+        if (config[type][key]) data.push(key)
+      })
+      emit('update', [...data], type)
+    }
+  }
+  else emit('update', { ...config }, type)
 }
 </script>
 

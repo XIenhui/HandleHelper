@@ -12,9 +12,9 @@
       <YunmuFilter :globalConfig="globalFilter.yunmu" @update="val => updateFilter('yunmu', val)" />
     </div>
     <div class="filter-panel">
-      <ToneFilter :is-exist="true" :globalConfig="globalFilter.tone" @update="val => updateFilter('tone', val)" />
-      <ShengmuFilter :is-exist="true" :globalConfig="globalFilter.shengmu" @update="val => updateFilter('shengmu', val)" />
-      <YunmuFilter :is-exist="true" :globalConfig="globalFilter.yunmu" @update="val => updateFilter('yunmu', val)" />
+      <ToneFilter :is-exist="true" @update="val => updateExists('tone', val)" />
+      <ShengmuFilter :is-exist="true" @update="val => updateExists('shengmu', val)" />
+      <YunmuFilter :is-exist="true" @update="val => updateExists('yunmu', val)" />
     </div>
   </div>
 </template>
@@ -37,7 +37,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update'])
+const emit = defineEmits(['updateInput','updateFilter','updateExist'])
 const globalFilter = ref({
   tone: [],
   shengmu: {},
@@ -63,24 +63,37 @@ const state = reactive({
     tone: [],
     shengmu: {},
     yunmu: {}
+  },
+  exists: {
+    tone: [],
+    shengmu: [],
+    yunmu: []
   }
 })
-
 const onInputChange = (val) => {
   state.inputs = { ...val }
-  emitCombined()
+  emit('updateInput', state.inputs)
 }
-
 const updateFilter = (type, val) => {
-  state.filters[type] = val
-  emitCombined()
+  state.filters[type] = val;
+  emit('updateFilter', state.filters)
 }
-
-const emitCombined = () => {
-  emit('update', {
-    inputs: state.inputs,
-    filters: state.filters,
-  })
+const updateExists = (type, val) => {
+  state.exists[type] = val;
+  if (type === 'tone'){
+    const data = [];
+    state.exists.tone.forEach((item, index) => {
+      if (item) data.push(index);
+    })
+    emit('updateExist', [...data], type)
+  }
+  else {
+    const data = [];
+    Object.keys(state.exists[type]).forEach((key) => {
+      if (state.exists[type][key]) data.push(key)
+    })
+    emit('updateExist', [...data], type)
+  }
 }
 </script>
 

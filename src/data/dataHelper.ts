@@ -192,7 +192,7 @@ const filterByType = (filter: FilterInner, data: any[], pyType: number = 0): [] 
 }
 export const searchModal = (filters: DataFilter)=>{
     const data = {
-        // data0: [...Object.entries(P)],
+        data0: [...Object.entries(P)],
         data1: [...idiomPinyinIndex],
     }
     const results = []

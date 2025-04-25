@@ -72,11 +72,11 @@ watch(
     (list) => {
       if (!list) return;
       Object.keys(list).forEach(key => {
-        if (!list[key]) activeMap[key] = false;
+        if (list[key] === false) activeMap[key] = false;
       })
       emit('update', { ...activeMap })
     },
-    { immediate: true }
+    { immediate: true, deep: true }
 )
 </script>
 

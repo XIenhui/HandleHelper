@@ -43,7 +43,7 @@ const globalFilter = ref({
   shengmu: {},
   yunmu: {}
 })
-watch(()=>props.globalFilterConfig,
+watch(() => props.globalFilterConfig,
     (val)=>{
       globalFilter.value = {
         tone: val.tone,

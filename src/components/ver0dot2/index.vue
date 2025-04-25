@@ -23,6 +23,11 @@
       </div>
     </el-scrollbar>
     <div class="buttonArea">
+<!--      <div class="checkSingle">-->
+<!--        <el-input v-model="inputCy" style="width: 120px"></el-input>-->
+<!--        <el-button type="primary" @click="checkInput">{{`判断输入词语`}}</el-button>-->
+<!--        {{ checkResult ? '符合' : '不符合'}}-->
+<!--      </div>-->
       <div>
         <el-button type="danger" @click="reset">{{`重置全部`}}</el-button>
         <el-button type="primary" plain @click="search">{{`查询`}}</el-button>
@@ -35,7 +40,7 @@
 import {reactive, ref} from 'vue'
 import PinyinInputWithTone from './SingleQuery.vue'
 import GlobalFilterConfig from './GlobleQuery.vue'
-import {DataFilter, parsePy, searchModal} from "@/data/dataHelper.js";
+import {DataFilter, parsePy, searchModal, singleCheckModal, singlePinyinIndex} from "@/data/dataHelper.js";
 
 const emit = defineEmits(['update','reset'])
 const trigger = ref(true);
@@ -49,6 +54,13 @@ const logDebounce = (data, time = 500) => {
     }, time)
   }
 }
+const inputCy = ref('');
+const checkResult = ref<Boolean>();
+const checkInput = () => {
+  const pys = singlePinyinIndex(inputCy.value);
+  // console.log(pys)
+  checkResult.value = singleCheckModal(actions.filter2, pys);
+}
 const filter1 = (data) => {
   const filterRes = filterFilter(data, 0);
   const existRes = existFilter(data, 0);
@@ -60,6 +72,7 @@ const filter2 = (data) => {
   return filterRes && existRes;
 }
 const filterFilter = (data, type = 0) => {
+  //单一过滤筛选 不完全相等（可存在部分相等），全局过滤筛选 不存在相等
   for (let index = 0; index < data.length; index++) {
     const item = data[index];
     const items = data[index];
@@ -113,12 +126,14 @@ const filterFilter = (data, type = 0) => {
     }
     else if (filters[index]) {
       const sd = filters[index].tone;
-      if (type) {
-        if (items.every((item) => {
-          if (sd.length && !sd[item[2]]) return true;
-        })) return false
+      if (sd.length) {
+        if (type) {
+          if (items.every((item) => {
+            if (sd[item[2]] === false) return true;
+          })) return false
+        }
+        else if (!sd[item[2]]) return false;
       }
-      else if (sd.length && !sd[item[2]]) return false;
     }
   }
   return true
@@ -263,5 +278,11 @@ const emitCombined = (data) => {
   text-align: center;
   align-items: center;
   justify-content: space-between;
+}
+.checkSingle {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  gap: 20px
 }
 </style>

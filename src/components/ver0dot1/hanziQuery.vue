@@ -113,7 +113,6 @@
     emits('update:modelValue', hzValue.value)
   })
   watch(pyValue,()=>{
-    console.log(pyValue.value)
     emits('update:modelValue', pyValue.value.join(','))
   },{deep: true})
   watch(type,()=>{
@@ -127,14 +126,13 @@
   })
   onMounted(() => {
     const { type: typeInit, logic: logicInit, position: positionInit, value: valueInit } = props.init
-    console.log({ typeInit, logicInit, positionInit, valueInit })
     if (typeInit) type.value = typeInit;
     if (logicInit) logic.value = logicInit;
     if (positionInit || positionInit === 0) position.value = positionInit;
     if (typeInit === 'hz' && valueInit) hzValue.value = valueInit;
     if (typeInit === 'py' && valueInit) {
       pyValue.value = valueInit;
-      pyValue.value[2] = Number((pyValue.value[2]));
+      if (pyValue.value[2] || pyValue.value[2] === 0) pyValue.value[2] = Number((pyValue.value[2]));
     }
   })
 </script>

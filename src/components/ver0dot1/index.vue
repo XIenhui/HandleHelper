@@ -88,8 +88,7 @@ const copyQuery = (index) => {
   }
   if (init.type === 'py') init.value = init.value.split(',')
   const newQuery = Object.assign(query.value[index], {init: init})
-  console.log(newQuery)
-  query.value.push(newQuery)
+  query.value.push({...newQuery})
 }
 const search = ()=>{
   results.value = []
@@ -220,11 +219,17 @@ const pyLogicMatch = (tar = [], data = {
       })
       return res >= 0
     }
-    else if(logic === 'no-contain'){
-      const res = tar.findIndex(item => {
-        return Array.from(item).some(single => pySingleCheck(single, value))
-      })
-      return res < 0
+    // else if(logic === 'no-contain'){
+    //   const res = tar.findIndex(item => {
+    //     return Array.from(item).some(single => pySingleCheck(single, value))
+    //   })
+    //   return res < 0
+    // }
+    else if (logic === 'no-contain') {
+      return tar.every(item => {
+        // 只要有一个 single 不等于 value，就说明这个 item 不完全等于 value
+        return !Array.from(item).every(single => pySingleCheck(single, value));
+      });
     }
     else if(logic === 'equal'){
       const item = tar[position-1]
@@ -239,16 +244,16 @@ const pyLogicMatch = (tar = [], data = {
     }
     else if(logic === 'no-equal'){
       const item = tar[position-1]
-      return !Array.from(item).some(single => pySingleCheck(single, value))
+      return !Array.from(item).every(single => pySingleCheck(single, value))
     }
   }
 }
 
-const pySingleCheck = (tar, value)=>{
-  logDebounce(tar)
-  return (!value[0] || tar[0] === value[0])
-      && (!value[1] || tar[1] === value[1])
-      && (!value[2] || tar[2] === Number(value[2]))
+const pySingleCheck = (tar, check)=>{
+  const sm = !check[0] || tar[0] === check[0];
+  const ym = !check[1] || tar[1] === check[1];
+  const sd = (!check[2] && check[2] !== 0)|| tar[2] === Number(check[2]);
+  return sm && ym && sd
 }
 const hzFilter = (cy, data)=>{
   return cy.filter(item => {

@@ -31,6 +31,17 @@ import {P} from "@/data/data.js";
 import {convertPinyin, idiomPinyinIndex, parsePy, pinyinToHanzi} from "@/data/dataHelper.ts";
 import {ElMessage as _message} from "element-plus/es/components/message/index";
 const emit = defineEmits(['update'])
+const trigger = ref(true);
+const logDebounce = (data, time = 500) => {
+  if (trigger.value) {
+    console.log(data)
+    trigger.value = false;
+    const timer = setTimeout(() => {
+      trigger.value = true;
+      clearTimeout(timer);
+    }, time)
+  }
+}
 const data = ref({
   data0: [],
   data1: [],
@@ -219,9 +230,10 @@ const pyLogicMatch = (tar = [], data = {
 }
 
 const pySingleCheck = (tar, value)=>{
-  return (!value[0] || tar.initial === value[0])
-      && (!value[1] || tar.final === value[1])
-      && (!value[2] || tar.tone.toString() === value[2])
+  logDebounce(tar)
+  return (!value[0] || tar[0] === value[0])
+      && (!value[1] || tar[1] === value[1])
+      && (!value[2] || tar[2] === Number(value[2]))
 }
 const hzFilter = (cy, data)=>{
   return cy.filter(item => {

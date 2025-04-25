@@ -27,6 +27,13 @@ export const idiomPinyinIndex = idioms.map(idiom => {
         return Array.from(pinyins); // 返回该字所有可能的拼音
     })];
 });
+export const singlePinyinIndex = (cy) => {
+    return [cy, Array.from(cy).map(char => {
+        // 此处需接入真实拼音库，此处简化为示例
+        const pinyins = hanziToPinyin.get(char) || [];
+        return Array.from(pinyins); // 返回该字所有可能的拼音
+    })];
+}
 export const initials = [
     'b', 'p', 'm', 'f', 'd', 't', 'n', 'l',
     'g', 'k', 'h', 'j', 'q', 'x',
@@ -171,7 +178,7 @@ export interface DataSplit {
     split1: (data) => Array,
     split2: (data) => Array,
 }
-const filterByType = (filter: FilterInner, data: [], pyType?: number = 0): [] => {
+const filterByType = (filter: FilterInner, data: any[], pyType: number = 0): [] => {
     if (filter.type === 0) {
         return pyFilter(data, pyType, filter.handle)
     }
@@ -185,7 +192,7 @@ const filterByType = (filter: FilterInner, data: [], pyType?: number = 0): [] =>
 }
 export const searchModal = (filters: DataFilter)=>{
     const data = {
-        data0: [...Object.entries(P)],
+        // data0: [...Object.entries(P)],
         data1: [...idiomPinyinIndex],
     }
     const results = []
@@ -203,4 +210,8 @@ export const searchModal = (filters: DataFilter)=>{
     const result = removeMulti(results)
     const chunks = setChunks(result)
     return { result, chunks }
+}
+export const singleCheckModal = (filter: FilterInner, data)=>{
+    const val = [data]
+    return filterByType(filter, val, 1).length > 0
 }

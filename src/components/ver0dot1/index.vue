@@ -7,9 +7,11 @@
         </el-button>
         <hanzi-query :has-label="index === 0" v-model="item.value"
                      :index = index
+                     :init="item.init"
                      @type-change="setQuery"
                      @logic-change="setQuery"
                      @position-change="setQuery"></hanzi-query>
+        <el-button @click="copyQuery(index)" class="deleteBtn">复制</el-button>
       </div>
     </el-scrollbar>
     <div class="buttonArea">
@@ -63,7 +65,8 @@ const addQuery = ()=>{
     type: 'hz',
     logic: 'contain',
     position: 0,
-    value: ''
+    value: '',
+    init: {},
   })
 }
 const deleteQuery = (index)=>{
@@ -75,6 +78,18 @@ const deleteQuery = (index)=>{
   else {
     _message.warning('至少需要一个条件')
   }
+}
+const copyQuery = (index) => {
+  const init = {
+    type: query.value[index].type,
+    logic: query.value[index].logic,
+    position: query.value[index].position,
+    value: query.value[index].value,
+  }
+  if (init.type === 'py') init.value = init.value.split(',')
+  const newQuery = Object.assign(query.value[index], {init: init})
+  console.log(newQuery)
+  query.value.push(newQuery)
 }
 const search = ()=>{
   results.value = []

@@ -1,7 +1,16 @@
 <script setup>
-  import {watch, computed} from "vue";
+  import {watch, computed, onMounted} from "vue";
   import {ref} from 'vue'
   const props = defineProps({
+    init: {
+      type: Object,
+      default: {
+        type: '',
+        logic: '',
+        position: '',
+        value: '',
+      }
+    },
     index: Number,
     modelValue: String,
     hasLabel: {
@@ -97,13 +106,14 @@
       label: '四声'
     },
   ]
-  const pyValue = ref(['','',''])
+  const pyValue = ref(['','', null])
   const emits = defineEmits(['update:modelValue','typeChange','logicChange','positionChange'])
 
   watch(hzValue,()=>{
     emits('update:modelValue', hzValue.value)
   })
   watch(pyValue,()=>{
+    console.log(pyValue.value)
     emits('update:modelValue', pyValue.value.join(','))
   },{deep: true})
   watch(type,()=>{
@@ -114,6 +124,18 @@
   })
   watch(position,()=>{
     emits('positionChange', position.value, 'position', props.index)
+  })
+  onMounted(() => {
+    const { type: typeInit, logic: logicInit, position: positionInit, value: valueInit } = props.init
+    console.log({ typeInit, logicInit, positionInit, valueInit })
+    if (typeInit) type.value = typeInit;
+    if (logicInit) logic.value = logicInit;
+    if (positionInit || positionInit === 0) position.value = positionInit;
+    if (typeInit === 'hz' && valueInit) hzValue.value = valueInit;
+    if (typeInit === 'py' && valueInit) {
+      pyValue.value = valueInit;
+      pyValue.value[2] = Number((pyValue.value[2]));
+    }
   })
 </script>
 
